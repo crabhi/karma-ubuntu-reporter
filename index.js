@@ -1,10 +1,20 @@
 var util = require('util');
 var spawn = require('child_process').spawn;
 var path = require('path');
-var root = __dirname;
+var dbus = require('dbus-native');
 
 var UbuntuReporter = function(helper, logger) {
   var log = logger.create('reporter.ubuntu');
+
+    var notifications = null;
+    var notificationId = 0;
+
+    var sessionBus = dbus.systemBus();
+    sessionBus.getService('org.freedesktop.Notifications').getInterface(
+            '/org/freedesktop/Notifications',
+            'org.freedesktop.Notifications', function(err, service) {
+                notifications = service;
+            });
 
   this.onBrowserComplete = function(browser) {
     var results = browser.lastResult;
@@ -32,21 +42,13 @@ var UbuntuReporter = function(helper, logger) {
       message = util.format('%d tests passed in %s.', results.success, time);
     }
 
-    var NOTIFY_CMD = "notify-send";
-
-    ls = spawn(NOTIFY_CMD, ["-i", icon, title, message]);
-
-    ls.on('error', function (e) {
-        if (e.code === 'ENOENT') {
-            log.error("The ubuntu reporter works only with", NOTIFY_CMD, "installed");
-        } else {
-            log.error(e);
-        }
-    });
-
-    ls.on('close', function (code) {
-        log.debug('Notifier finished. Code: ' + code);
-    });
+    if (notifications) {
+        notifications.Notify('', notificationId, icon, title, message, [], [], 5, function(err, id) {
+            notificationId = id;
+        });
+    } else {
+        log.info("Notification service not ready yet");
+    }
   };
 };
 

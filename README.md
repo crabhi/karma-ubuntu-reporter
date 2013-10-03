@@ -11,11 +11,12 @@ For more information on Karma see the [homepage].
 
 ## Installation
 
-1. Install Karma and karma-ubuntu-reporter plugin. The plugin requires Karma 0.9+, but Karma's stable version is now 0.10 so it's pretty easy.
+1. Install socat, Karma and karma-ubuntu-reporter plugin. The plugin requires Karma 0.9+, but Karma's stable version is now 0.10 so it's pretty easy.
 
   a. Globally. System-wide with `karma` available on command line.
 
     ```
+    apt-get install socat
     npm install -g karma
     npm install -g karma-ubuntu-reporter
     ```
