@@ -1,6 +1,6 @@
 {
   "name": "karma-ubuntu-reporter",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A Karma plugin. Report results with Ubuntu notifications.",
   "main": "index.js",
   "scripts": {

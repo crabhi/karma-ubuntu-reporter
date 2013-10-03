@@ -1,11 +1,3 @@
-//Manage notification center in osx
-//Based on https://npmjs.org/package/node-osx-notifier
-//Configuration sample:
-// osxNotifications = {
-//   notify: true,
-//   host: "localhost",  //Defaults to localhost
-//   port: 1337 //defaults to 1337
-// };
 var util = require('util');
 var spawn = require('child_process').spawn;
 var path = require('path');
@@ -40,7 +32,18 @@ var UbuntuReporter = function(helper, logger) {
       message = util.format('%d tests passed in %s.', results.success, time);
     }
 
-    ls = spawn("notify-send", ["-i", icon, title, message]);
+    var NOTIFY_CMD = "notify-send";
+
+    ls = spawn(NOTIFY_CMD, ["-i", icon, title, message]);
+
+    ls.on('error', function (e) {
+        if (e.code === 'ENOENT') {
+            log.error("The ubuntu reporter works only with", NOTIFY_CMD, "installed");
+        } else {
+            log.error(e);
+        }
+    });
+
     ls.on('close', function (code) {
         log.debug('Notifier finished. Code: ' + code);
     });
